@@ -3,6 +3,7 @@ export enum AsyncJobStatus {
   PROCESSING = "processing",
   COMPLETED = "completed",
   FAILED = "failed",
+  CANCELLED = "cancelled",
 }
 
 export interface AsyncJob {
@@ -10,6 +11,7 @@ export interface AsyncJob {
   status: AsyncJobStatus;
   statusQueue: Array<AsyncJobStatus>;
   data: any;
+  numRetries: number;
 
   genExecute(): Promise<void>;
 }
@@ -19,7 +21,8 @@ export abstract class BaseAsyncJob implements AsyncJob {
     public uid: string,
     public status: AsyncJobStatus,
     public statusQueue: Array<AsyncJobStatus>,
-    public data: any
+    public data: any,
+    public numRetries: number = 0
   ) {}
 
   protected updateStatus = (status: AsyncJobStatus) => {
