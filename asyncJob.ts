@@ -11,8 +11,7 @@ export interface AsyncJob {
   statusQueue: Array<AsyncJobStatus>;
   data: any;
 
-  // Methods
-  genExecute: () => void;
+  genExecute(): Promise<void>;
 }
 
 export abstract class BaseAsyncJob implements AsyncJob {
@@ -28,5 +27,5 @@ export abstract class BaseAsyncJob implements AsyncJob {
     this.status = status;
   };
 
-  abstract genExecute(): void;
+  abstract genExecute(): Promise<void>;
 }
