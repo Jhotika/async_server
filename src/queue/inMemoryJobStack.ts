@@ -42,7 +42,7 @@ export class InMemoryJobStack extends JobStack {
   };
 
   public genPostProcessJob = async (job: BaseAsyncJob): Promise<void> => {
-    this.genRemoveJobFromPendingSet(job);
+    await this.genRemoveJobFromRunningSet(job);
     this.logger.info(
       `job ${job.uid} finished with status ${job.status}, removing from pending set`,
       {
@@ -59,12 +59,11 @@ export class InMemoryJobStack extends JobStack {
   private genRemoveJobFromRunningSet = async (
     job: BaseAsyncJob
   ): Promise<boolean> => {
-    // TODO(Taman / critical): interrupt the task which is running
     const got = this.runningJobUids.delete(job.uid);
 
-    if (got) {
+    if (!got) {
       this.logger.info(
-        `trying to remove non-existent job ${job.uid} from running set`
+        `trying to remove non-existent job ${job.uid} from running set ${this.runningJobUids}`
       );
     } else {
       this.logger.info(`job ${job.uid} removed from running set`, {
@@ -93,6 +92,7 @@ export class InMemoryJobStack extends JobStack {
         job?.isProcessable()
       ) {
         job.status = AsyncJobStatus.PENDING;
+        this.pendingJobUids.delete(job.uid);
         return job;
       }
     }

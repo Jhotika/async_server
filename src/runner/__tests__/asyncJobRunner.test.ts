@@ -1,5 +1,3 @@
-// unit test for asyncJobRunner
-
 import { AsyncJobRunner } from "../asyncJobRunner";
 import { InMemoryJobStack } from "../../queue/inMemoryJobStack";
 import { SendNotificationJob } from "../../jobs/sendNotificiationJob";
@@ -23,11 +21,14 @@ describe("AsyncJobRunner", () => {
         foo: "bar",
       },
     });
-    const spy = jest.spyOn(jobStack, "genPostProcessJob");
+
     jobStack.addJob(job);
     const runner = new AsyncJobRunner(jobStack, logger);
+    // In real implementation, the runner will continue to run as a daemon,
+    // but here we just run it once and expect it to complete the job
     await runner.run();
     expect(job.status).toBe(AsyncJobStatus.COMPLETED);
-    expect(spy).toHaveBeenCalledWith(job);
+    expect(jobStack.stack.length).toBe(0);
+    expect(jobStack.pendingJobUids.has(job.uid)).toBeFalsy();
   });
 });

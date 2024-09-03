@@ -1,6 +1,6 @@
 import { AsyncJobStatus, BaseAsyncJob } from "./asyncJob";
 
-interface TNotifJobData {
+interface TSendNotificationJobData {
   title: string;
   message: string;
   data: any;
@@ -8,7 +8,7 @@ interface TNotifJobData {
 
 export class SendNotificationJob extends BaseAsyncJob {
   constructor(
-    data: TNotifJobData,
+    data: TSendNotificationJobData,
     status: AsyncJobStatus = AsyncJobStatus.PENDING,
     numRetries: number = 0,
     retryCount: number = 0
@@ -17,7 +17,7 @@ export class SendNotificationJob extends BaseAsyncJob {
   }
 
   async genExecute(): Promise<void> {
-    console.log(`NotifJob with uid ${this.uid} executed`);
+    console.log(`SendNotificationJob with uid ${this.uid} executed`);
   }
 }
 function v4(): string {
