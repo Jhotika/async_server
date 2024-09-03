@@ -1,6 +1,6 @@
 import { InMemoryJobStack } from "../inMemoryJobStack";
 import { AsyncJobStatus } from "../../jobs/asyncJob";
-import { NotifJob } from "../../jobs/notifJob";
+import { SendNotificationJob } from "../../jobs/sendNotificiationJob";
 import { Logger } from "../../logger/logger";
 
 describe("InMemoryJobStack", () => {
@@ -13,7 +13,7 @@ describe("InMemoryJobStack", () => {
   });
 
   test("addJob should add a job to the stack", () => {
-    const job = new NotifJob({
+    const job = new SendNotificationJob({
       title: "Test",
       message: "Test",
       data: {},
@@ -31,14 +31,14 @@ describe("InMemoryJobStack", () => {
       1,
       logger
     );
-    const job1 = new NotifJob({
+    const job1 = new SendNotificationJob({
       title: "Test 1",
       message: "Test 1",
       data: {
         dummyData: "dummyData",
       },
     });
-    const job2 = new NotifJob({
+    const job2 = new SendNotificationJob({
       title: "Test 2",
       message: "Test 2",
       data: {
@@ -50,8 +50,8 @@ describe("InMemoryJobStack", () => {
     expect(() => smallStack.addJob(job2)).toThrow("Job stack is full");
   });
 
-  test("genFetchJobToRun should return a job and mark it as processing", async () => {
-    const job = new NotifJob({
+  test("genFetchJobToRun should return a job", async () => {
+    const job = new SendNotificationJob({
       title: "Test",
       message: "Test",
       data: {},
@@ -60,12 +60,11 @@ describe("InMemoryJobStack", () => {
 
     const fetchedJob = await jobStack.genFetchJobToRun();
     expect(fetchedJob).toBe(job);
-    expect(fetchedJob?.status).toBe(AsyncJobStatus.PROCESSING);
     expect(jobStack.runningJobUids.has(job.uid)).toBeTruthy();
   });
 
   test("genPostProcessJob should remove job from running set", async () => {
-    const job = new NotifJob({
+    const job = new SendNotificationJob({
       title: "Test",
       message: "Test",
       data: {},
@@ -78,7 +77,7 @@ describe("InMemoryJobStack", () => {
   });
 
   test("removeJobFromRunningSet should remove job from running set", async () => {
-    const job = new NotifJob({
+    const job = new SendNotificationJob({
       title: "Test",
       message: "Test",
       data: {},

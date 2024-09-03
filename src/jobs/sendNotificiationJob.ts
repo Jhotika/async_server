@@ -1,4 +1,3 @@
-import { UUID } from "mongodb";
 import { AsyncJobStatus, BaseAsyncJob } from "./asyncJob";
 
 interface TNotifJobData {
@@ -7,7 +6,7 @@ interface TNotifJobData {
   data: any;
 }
 
-export class NotifJob extends BaseAsyncJob {
+export class SendNotificationJob extends BaseAsyncJob {
   constructor(
     data: TNotifJobData,
     status: AsyncJobStatus = AsyncJobStatus.PENDING,
@@ -22,5 +21,5 @@ export class NotifJob extends BaseAsyncJob {
   }
 }
 function v4(): string {
-  return new UUID().id.toString();
+  return crypto.randomUUID();
 }

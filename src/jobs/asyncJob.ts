@@ -30,6 +30,7 @@ export abstract class BaseAsyncJob implements AsyncJob {
   };
 
   isProcessable = () => {
+    console.log(this ? "this is not null" : "this is null");
     return (
       this &&
       (this.status === AsyncJobStatus.PENDING ||

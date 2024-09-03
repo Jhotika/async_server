@@ -36,7 +36,6 @@ export class InMemoryJobStack extends JobStack {
   public genFetchJobToRun = async (): Promise<BaseAsyncJob | null> => {
     const job = this.fetchJob();
     if (job) {
-      job.status = AsyncJobStatus.PROCESSING;
       this.runningJobUids.add(job.uid);
     }
     return job;
