@@ -1,5 +1,5 @@
 import { UUID } from "mongodb";
-import { type AsyncJobStatus, BaseAsyncJob } from "./asyncJob";
+import { AsyncJobStatus, BaseAsyncJob } from "./asyncJob";
 
 interface TNotifJobData {
   title: string;
@@ -7,19 +7,18 @@ interface TNotifJobData {
   data: any;
 }
 
-class NotifJob extends BaseAsyncJob {
+export class NotifJob extends BaseAsyncJob {
   constructor(
-    status: AsyncJobStatus, // remove
-    statusQueue: Array<AsyncJobStatus>, // remove
     data: TNotifJobData,
+    status: AsyncJobStatus = AsyncJobStatus.PENDING,
     numRetries: number = 0,
     retryCount: number = 0
   ) {
-    super(v4(), status, statusQueue, data, numRetries, retryCount);
+    super(v4(), status, data, numRetries, retryCount);
   }
 
   async genExecute(): Promise<void> {
-    console.log("NotifJob executed");
+    console.log(`NotifJob with uid ${this.uid} executed`);
   }
 }
 function v4(): string {

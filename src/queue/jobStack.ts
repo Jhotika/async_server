@@ -1,4 +1,4 @@
-import { type ILogger, Logger } from "logger/logger";
+import { type ILogger, Logger } from "../logger/logger";
 import { BaseAsyncJob } from "../jobs/asyncJob";
 
 export interface IJobStack {
@@ -12,10 +12,11 @@ export interface IJobStack {
   addJob(job: BaseAsyncJob): void;
   genFetchJobToRun(): Promise<BaseAsyncJob | null>;
   genPostProcessJob(job: BaseAsyncJob): Promise<void>;
+  genCancelJob(job: BaseAsyncJob): void;
 }
 
 export abstract class JobStack implements IJobStack {
-  public readonly eventType: string = "job_stack";
+  public eventType: string = "job_stack";
   constructor(
     public stack: BaseAsyncJob[],
     public pendingJobUids: Set<string>,
@@ -27,4 +28,5 @@ export abstract class JobStack implements IJobStack {
   abstract addJob(job: BaseAsyncJob): void;
   abstract genFetchJobToRun(): Promise<BaseAsyncJob | null>;
   abstract genPostProcessJob(job: BaseAsyncJob): Promise<void>;
+  abstract genCancelJob(job: BaseAsyncJob): void;
 }

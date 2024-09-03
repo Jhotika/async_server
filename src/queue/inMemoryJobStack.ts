@@ -11,6 +11,7 @@ export class InMemoryJobStack extends JobStack {
     logger: ILogger
   ) {
     super(stack, pendingJobUids, runningJobUids, capacity, logger);
+    this.eventType = "in_memory_job_stack";
   }
 
   addJob(job: BaseAsyncJob): void {
@@ -24,13 +25,12 @@ export class InMemoryJobStack extends JobStack {
     }
   }
 
-  removeJobFromRunningSet = (job: BaseAsyncJob) => {
-    const got = this.runningJobUids.delete(job.uid);
-    if (!got) {
-      this.logger.info(
-        `trying to remove non-existent job ${job.uid} from running set`
-      );
+  public genCancelJob = async (job: BaseAsyncJob): Promise<void> => {
+    job.status = AsyncJobStatus.CANCELLED;
+    if (await this.genRemoveJobFromPendingSet(job)) {
+      return;
     }
+    await this.genRemoveJobFromRunningSet(job);
   };
 
   public genFetchJobToRun = async (): Promise<BaseAsyncJob | null> => {
@@ -43,7 +43,7 @@ export class InMemoryJobStack extends JobStack {
   };
 
   public genPostProcessJob = async (job: BaseAsyncJob): Promise<void> => {
-    this.genRemoveJobFromPendingStack(job);
+    this.genRemoveJobFromPendingSet(job);
     this.logger.info(
       `job ${job.uid} finished with status ${job.status}, removing from pending set`,
       {
@@ -57,8 +57,32 @@ export class InMemoryJobStack extends JobStack {
     );
   };
 
-  private genRemoveJobFromPendingStack = async (job: BaseAsyncJob) => {
-    this.runningJobUids.delete(job.uid);
+  private genRemoveJobFromRunningSet = async (
+    job: BaseAsyncJob
+  ): Promise<boolean> => {
+    // TODO(Taman / critical): interrupt the task which is running
+    const got = this.runningJobUids.delete(job.uid);
+
+    if (got) {
+      this.logger.info(
+        `trying to remove non-existent job ${job.uid} from running set`
+      );
+    } else {
+      this.logger.info(`job ${job.uid} removed from running set`, {
+        event: "running_job_removed",
+        eventType: this.eventType,
+        uid: job.uid,
+        jobType: job.constructor.name,
+        status: job.status,
+      });
+    }
+    return got;
+  };
+
+  private genRemoveJobFromPendingSet = async (
+    job: BaseAsyncJob
+  ): Promise<boolean> => {
+    return this.runningJobUids.delete(job.uid);
   };
 
   private fetchJob(): BaseAsyncJob | null {

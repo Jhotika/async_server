@@ -9,7 +9,6 @@ export enum AsyncJobStatus {
 export interface AsyncJob {
   uid: string;
   status: AsyncJobStatus;
-  statusQueue: Array<AsyncJobStatus>;
   data: any;
   numRetries: number;
   retryCount: number;
@@ -21,14 +20,12 @@ export abstract class BaseAsyncJob implements AsyncJob {
   constructor(
     public uid: string,
     public status: AsyncJobStatus,
-    public statusQueue: Array<AsyncJobStatus>,
     public data: any,
     public numRetries: number = 0,
     public retryCount: number = 0
   ) {}
 
   protected updateStatus = (status: AsyncJobStatus) => {
-    this.statusQueue.push(status);
     this.status = status;
   };
 
