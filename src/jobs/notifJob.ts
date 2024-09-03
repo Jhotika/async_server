@@ -11,9 +11,11 @@ class NotifJob extends BaseAsyncJob {
   constructor(
     status: AsyncJobStatus, // remove
     statusQueue: Array<AsyncJobStatus>, // remove
-    data: TNotifJobData
+    data: TNotifJobData,
+    numRetries: number = 0,
+    retryCount: number = 0
   ) {
-    super(v4(), status, statusQueue, data);
+    super(v4(), status, statusQueue, data, numRetries, retryCount);
   }
 
   async genExecute(): Promise<void> {
