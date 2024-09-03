@@ -7,10 +7,10 @@ interface IJobStack {
 }
 
 export abstract class JobStack implements IJobStack {
-  private stack: BaseAsyncJob[];
+  public stack: BaseAsyncJob[];
   constructor(
-    private readonly capacity: number = 100,
-    private readonly logger: ILogger = new Logger()
+    public readonly capacity: number = 100,
+    public readonly logger: ILogger = new Logger()
   ) {
     this.stack = [];
   }
