@@ -20,6 +20,7 @@ export class SendNotificationJob extends BaseAsyncJob {
     console.log(`SendNotificationJob with uid ${this.uid} executed`);
   }
 }
+
 function v4(): string {
   return crypto.randomUUID();
 }
