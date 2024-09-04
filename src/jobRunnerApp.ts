@@ -1,5 +1,3 @@
-// driver for the app (OOP version)
-
 import { AsyncJobRunner } from "./runner/asyncJobRunner";
 import { InMemoryJobStack } from "./queue/inMemoryJobStack";
 import { Logger } from "./logger/logger";
@@ -32,9 +30,11 @@ export class JobRunnerApp {
       this.logger.log("Running job runner");
       this.isRunning = true;
       try {
-        await this.runner.run(); // Wait for the job to complete
+        await this.runner.run();
+      } catch (error) {
+        this.logger.error(`Error running job: ${error}`);
       } finally {
-        this.isRunning = false; // Reset the flag whether the job succeeded or failed
+        this.isRunning = false;
       }
     }
   }
@@ -42,7 +42,7 @@ export class JobRunnerApp {
   public stop(): void {
     this.logger.log("Received SIGINT signal, shutting down...");
     if (this.intervalId) {
-      clearInterval(this.intervalId); // Stop the interval
+      clearInterval(this.intervalId);
     }
 
     if (this.isRunning) {
@@ -50,9 +50,12 @@ export class JobRunnerApp {
       this.runner.run().then(() => {
         this.logger.log("Job completed. Exiting now.");
         process.exit(0);
+      }).catch(error => {
+        this.logger.error(`Error during shutdown: ${error}`);
+        process.exit(1);
       });
     } else {
-      process.exit(0); // Exit immediately if no job is running
+      process.exit(0);
     }
   }
 }
