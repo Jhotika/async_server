@@ -5,18 +5,35 @@ export interface ILogger {
   error(message: any, ...optionalParams: any[]): void;
 }
 
+export enum LogLevel {
+  SILENT = 0,
+  NORMAL = 1,
+  VERBOSE = 2,
+}
+
 export class Logger implements ILogger {
-  constructor() {}
+  private level: LogLevel;
+  constructor(level: LogLevel = LogLevel.NORMAL) {
+    this.level = level;
+  }
   warn(message: any, ...optionalParams: any[]): void {
-    console.warn(message, optionalParams);
+    if (this.level >= LogLevel.NORMAL) {
+      console.warn(message, optionalParams);
+    }
   }
   error(message: any, ...optionalParams: any[]): void {
-    console.error(message, optionalParams);
+    if (this.level >= LogLevel.NORMAL) {
+      console.error(message, optionalParams);
+    }
   }
   log = (message: string, ...optionalParams: any[]) => {
-    console.log(message, optionalParams);
+    if (this.level >= LogLevel.NORMAL) {
+      console.log(message, optionalParams);
+    }
   };
   info = (message: string, ...optionalParams: any[]) => {
-    console.info(message, optionalParams);
+    if (this.level >= LogLevel.NORMAL) {
+      console.info(message, optionalParams);
+    }
   };
 }

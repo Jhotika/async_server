@@ -1,7 +1,7 @@
 import { AsyncJobRunner } from "../asyncJobRunner";
 import { InMemoryJobStack } from "../../queue/inMemoryJobStack";
-import { SendNotificationJob } from "../../jobs/sendNotificiationJob";
-import { Logger } from "../../logger/logger";
+import { ExampleJob } from "../../jobs/exampleJob";
+import { Logger, LogLevel } from "../../logger/logger";
 import { AsyncJobStatus } from "../../jobs/asyncJob";
 
 describe("AsyncJobRunner", () => {
@@ -9,12 +9,12 @@ describe("AsyncJobRunner", () => {
   let logger: Logger;
 
   beforeEach(() => {
-    logger = new Logger();
+    logger = new Logger(LogLevel.SILENT);
     jobStack = new InMemoryJobStack([], new Set(), new Set(), 100, logger);
   });
 
   test("run should process a job", async () => {
-    const job = new SendNotificationJob({
+    const job = new ExampleJob({
       title: "Test notification",
       message: "User X has sent you a message",
       data: {
@@ -22,7 +22,7 @@ describe("AsyncJobRunner", () => {
       },
     });
 
-    jobStack.addJob(job);
+    jobStack.genAddJob(job);
     const runner = new AsyncJobRunner(jobStack, logger);
     // In real implementation, the runner will continue to run as a daemon,
     // but here we just run it once and expect it to complete the job

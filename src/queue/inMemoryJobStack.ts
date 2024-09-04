@@ -14,7 +14,7 @@ export class InMemoryJobStack extends JobStack {
     this.eventType = "in_memory_job_stack";
   }
 
-  addJob(job: BaseAsyncJob): void {
+  public genAddJob = async (job: BaseAsyncJob): Promise<void> => {
     if (this.stack.length < this.capacity) {
       this.stack.push(job);
       this.pendingJobUids.add(job.uid);
@@ -23,7 +23,7 @@ export class InMemoryJobStack extends JobStack {
       this.logger.error(message);
       throw new Error(message);
     }
-  }
+  };
 
   public genCancelJob = async (job: BaseAsyncJob): Promise<void> => {
     job.status = AsyncJobStatus.CANCELLED;

@@ -6,7 +6,6 @@ export class AsyncJobRunner {
   public readonly eventType: string = "job_runner";
   constructor(
     private jobStack: IJobStack,
-
     private logger: ILogger = new Logger()
   ) {}
 
