@@ -9,7 +9,7 @@ export interface IJobStack {
   logger: ILogger;
 
   // methods
-  addJob(job: BaseAsyncJob): void;
+  genAddJob(job: BaseAsyncJob): Promise<void>;
   genFetchJobToRun(): Promise<BaseAsyncJob | null>;
   genPostProcessJob(job: BaseAsyncJob): Promise<void>;
   genCancelJob(job: BaseAsyncJob): void;
@@ -25,7 +25,7 @@ export abstract class JobStack implements IJobStack {
     public readonly logger: ILogger = new Logger()
   ) {}
 
-  abstract addJob(job: BaseAsyncJob): void;
+  abstract genAddJob(job: BaseAsyncJob): Promise<void>;
   abstract genFetchJobToRun(): Promise<BaseAsyncJob | null>;
   abstract genPostProcessJob(job: BaseAsyncJob): Promise<void>;
   abstract genCancelJob(job: BaseAsyncJob): void;
